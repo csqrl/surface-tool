@@ -4,6 +4,8 @@ local Components = PluginRoot.Components
 local Roact: Roact = require(PluginRoot.Packages.Roact)
 
 local StudioPlugin = require(Components.StudioPlugin)
+local StudioSettings = require(Components.StudioSettings)
+local App = require(Components.App)
 
 local e = Roact.createElement
 
@@ -20,13 +22,8 @@ function Component:render()
         toolbar = e(StudioPlugin.Toolbar, {
             name = "Appearance",
         }, {
-            widgetToggle = e(StudioPlugin.Button, {
-                id = "csqrl.surface-tool.button.main",
-                tooltip = "Changes the surface input of a part's surface",
-                icon = "rbxassetid://6814157597",
-                label = "Surface",
-                active = false,
-                onClick = self.pluginButtonInvoked,
+            studioSettingsProvider = e(StudioSettings, nil, {
+                surfaceMenu = e(App),
             }),
         }),
     })
