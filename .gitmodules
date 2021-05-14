@@ -1,0 +1,9 @@
+[submodule "packages/roact"]
+	path = packages/roact
+	url = https://github.com/roblox/roact
+[submodule "packages/llama"]
+	path = packages/llama
+	url = https://github.com/Frelerik/llama
+[submodule "packages/testez"]
+	path = packages/testez
+	url = https://github.com/roblox/testez
