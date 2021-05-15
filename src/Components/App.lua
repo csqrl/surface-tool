@@ -7,6 +7,7 @@ local StudioPlugin = require(Components.StudioPlugin)
 local TriggerButton = require(Components.SurfaceTriggerButton)
 local SurfaceMenuActions = require(Components.SurfaceMenuActions)
 local PartPicker = require(Components.PartPicker)
+local KeybindUI = require(Components.KeybindUI)
 
 local e = Roact.createElement
 
@@ -54,6 +55,10 @@ function Component:render()
                 self:setState({ surfaceType = Roact.None })
             end,
         }) or nil,
+
+        keybindUI = e(KeybindUI, {
+            show = self.state.surfaceType ~= nil,
+        }),
     })
 end
 

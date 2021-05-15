@@ -20,7 +20,7 @@ function Component:render()
         value = self.props.plugin,
     }, {
         toolbar = e(StudioPlugin.Toolbar, {
-            name = "Appearance",
+            name = "Resurface",
         }, {
             studioSettingsProvider = e(StudioSettings, nil, {
                 surfaceMenu = e(App),

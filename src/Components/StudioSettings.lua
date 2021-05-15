@@ -12,6 +12,10 @@ function Component:init()
     self._changed = Studio.Changed:Connect(function()
         self:setState({})
     end)
+
+    self._themeChanged = Studio.ThemeChanged:Connect(function()
+        self:setState({})
+    end)
 end
 
 function Component:didMount()
@@ -20,12 +24,14 @@ end
 
 function Component:willUnmount()
     self._changed:Disconnect()
+    self._themeChanged:Disconnect()
 end
 
 function Component:render()
     return e(Context.Provider, {
         value = {
             settings = Studio,
+            theme = Studio.Theme,
         },
     }, self.props[Roact.Children])
 end
@@ -33,7 +39,7 @@ end
 function Component.use(render)
     return e(Context.Consumer, {
         render = function(values)
-            return render(values.settings)
+            return render(values.settings, values.theme)
         end,
     })
 end
