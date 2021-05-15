@@ -29,6 +29,7 @@ function Component:init()
         active = self.props.surfaceType ~= nil,
         target = nil,
         surface = nil,
+        applyAllSides = false,
     })
 
     self:bindMouseEvents()
@@ -41,6 +42,8 @@ function Component:init()
 end
 
 function Component:bindMouseEvents()
+    local applyAllModifierKeys = { Enum.KeyCode.LeftControl, Enum.KeyCode.RightControl }
+
     table.insert(self.connections, self.props.plugin.Deactivation:Connect(function()
         self.dismissPicker()
     end))
@@ -56,10 +59,26 @@ function Component:bindMouseEvents()
     end))
 
     table.insert(self.connections, self.mouse.Button1Up:Connect(function()
-        ServiceAPI.ApplySurfaceTypeToPartNormal(self.props.surfaceType, self.mouse.Target, self.mouse.TargetSurface)
+        if self.state.applyAllSides then
+            ServiceAPI.ApplySurfaceTypeToPartAcrossAllNormals(self.props.surfaceType, self.mouse.Target)
+        else
+            ServiceAPI.ApplySurfaceTypeToPartNormal(self.props.surfaceType, self.mouse.Target, self.mouse.TargetSurface)
+        end
 
         if not (UserInputService:IsKeyDown("LeftShift") or UserInputService:IsKeyDown("RightShift")) then
             self.dismissPicker()
+        end
+    end))
+
+    table.insert(self.connections, UserInputService.InputBegan:Connect(function(input: InputObject)
+        if input.UserInputType == Enum.UserInputType.Keyboard and table.find(applyAllModifierKeys, input.KeyCode) then
+            self:setState({ applyAllSides = true })
+        end
+    end))
+
+    table.insert(self.connections, UserInputService.InputEnded:Connect(function(input: InputObject)
+        if input.UserInputType == Enum.UserInputType.Keyboard and table.find(applyAllModifierKeys, input.KeyCode) then
+            self:setState({ applyAllSides = false })
         end
     end))
 end
@@ -107,11 +126,17 @@ function Component:render()
         return e(Roact.Portal, {
             target = CoreGui,
         }, {
-            surfaceSelection = e("SurfaceSelection", {
+            surfaceSelection = not self.state.applyAllSides and e("SurfaceSelection", {
                 Adornee = self.state.target,
                 TargetSurface = self.state.surface,
                 Color3 = settings["Active Color"],
-            }),
+            }) or nil,
+
+            partSelection = self.state.applyAllSides and e("SelectionBox", {
+                Adornee = self.state.target,
+                Color3 = settings["Active Color"],
+                LineThickness = settings["Line Thickness"],
+            }) or nil,
         })
     end)
 end

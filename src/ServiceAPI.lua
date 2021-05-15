@@ -1,3 +1,4 @@
+--!strict
 type EnumValue<T> = (string | number | T)
 
 local ChangeHistory = game:GetService("ChangeHistoryService")
@@ -19,13 +20,13 @@ local icons = {
 }
 
 function Service.GetIconFromSurfaceType(surfaceType: EnumValue<Enum.SurfaceType>): string
-    surfaceType = Service.ResolveEnumable(surfaceType)
+    surfaceType = Service.ResolveEnumable(surfaceType, Enum.SurfaceType)
     local icon = icons[surfaceType]
     return icon
 end
 
 function Service.FormatEnumName(value: EnumValue<Enum.SurfaceType>): string
-    value = Service.ResolveEnumable(value)
+    value = Service.ResolveEnumable(value, Enum.SurfaceType)
     return string.sub(string.gsub(value.Name, "%u", " %1"), 2)
 end
 
@@ -38,7 +39,7 @@ function Service.ResolveEnumable(value: EnumValue<EnumItem>, enumBase: Enum): En
 end
 
 function Service.GetSurfacePropertyFromNormalId(normal: EnumValue<Enum.NormalId>)
-    normal = Service.ResolveEnumable(normal)
+    normal = Service.ResolveEnumable(normal, Enum.NormalId)
 
     if normal == Enum.NormalId.Back then
         return "BackSurface"
@@ -60,20 +61,34 @@ function Service.ApplySurfaceTypeToPartNormal(
     part: BasePart,
     normal: EnumValue<Enum.NormalId>
 )
-    if not surfaceType or not part or not normal then
+    if not (surfaceType and part and normal and part:IsA("BasePart") and not part.Locked) then
         return
     end
 
-    if not part:IsA("BasePart") or part.Locked then
-        return
-    end
-
-    surfaceType = Service.ResolveEnumable(surfaceType)
+    surfaceType = Service.ResolveEnumable(surfaceType, Enum.SurfaceType)
     local surfaceProperty = Service.GetSurfacePropertyFromNormalId(normal)
 
     part[surfaceProperty] = surfaceType
 
     ChangeHistory:SetWaypoint(fmt("apply %q to %s of %s", surfaceType.Name, surfaceProperty, part.Name))
+end
+
+function Service.ApplySurfaceTypeToPartAcrossAllNormals(
+    surfaceType: EnumValue<Enum.SurfaceType>,
+    part: BasePart
+)
+    if not (surfaceType and part and part:IsA("BasePart") and not part.Locked) then
+        return
+    end
+
+    surfaceType = Service.ResolveEnumable(surfaceType, Enum.SurfaceType)
+
+    for _, normalIdEnumItem in ipairs(Enum.NormalId:GetEnumItems()) do
+        local surfaceProperty = Service.GetSurfacePropertyFromNormalId(normalIdEnumItem)
+        part[surfaceProperty] = surfaceType
+    end
+
+    ChangeHistory:SetWaypoint(fmt("apply %q to all sides of %s", surfaceType.Name, part.Name))
 end
 
 return Service
