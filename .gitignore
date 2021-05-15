@@ -1,6 +1,9 @@
 # Project place file
-/surface-tool.rbxlx
+*.rbxlx
+*.rbxl
+*.rbxmx
+*.rbxm
 
 # Roblox Studio lock files
-/*.rbxlx.lock
-/*.rbxl.lock
+*.rbxlx.lock
+*.rbxl.lock

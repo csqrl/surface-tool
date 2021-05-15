@@ -1,3 +1,4 @@
+local UserInputService = game:GetService("UserInputService")
 local CoreGui = game:GetService("CoreGui")
 
 local PluginRoot = script:FindFirstAncestor("SurfaceTool")
@@ -56,7 +57,10 @@ function Component:bindMouseEvents()
 
     table.insert(self.connections, self.mouse.Button1Up:Connect(function()
         ServiceAPI.ApplySurfaceTypeToPartNormal(self.props.surfaceType, self.mouse.Target, self.mouse.TargetSurface)
-        self.dismissPicker()
+
+        if not (UserInputService:IsKeyDown("LeftShift") or UserInputService:IsKeyDown("RightShift")) then
+            self.dismissPicker()
+        end
     end))
 end
 
