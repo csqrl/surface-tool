@@ -1,0 +1,8 @@
+[package]
+name = "resurface"
+description = "Plugin replacement for the Roblox Studio surface tool"
+version = "0.0.3"
+license = "MIT"
+authors = ["csqrl (https://csqrl.dev)"]
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"

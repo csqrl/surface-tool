@@ -1,0 +1,28 @@
+name: Publish Release
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Setup Toolchain
+        uses: Roblox/setup-foreman@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Project
+        run: rojo build default.project.json -o release.rbxm
+
+      - name: Upload to Roblox
+        run: rojo upload default.project.json --asset_id 5070921519 --cookie "$ROBLOSECURITY"
+        env:
+          ROBLOSECURITY: ${{ secrets.ROBLOSECURITY }}
